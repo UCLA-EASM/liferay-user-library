@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" default-destroy-method="destroy" default-init-method="afterPropertiesSet" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="com.liferay.sample.service.DocumentLocalService" class="com.liferay.sample.service.impl.DocumentLocalServiceImpl" />
+	<bean id="com.liferay.sample.service.DocumentService" class="com.liferay.sample.service.impl.DocumentServiceImpl" />
+	<bean id="com.liferay.sample.service.persistence.DocumentPersistence" class="com.liferay.sample.service.persistence.DocumentPersistenceImpl" parent="basePersistence" />
+</beans>
