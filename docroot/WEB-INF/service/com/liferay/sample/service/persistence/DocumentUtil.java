@@ -431,6 +431,233 @@ public class DocumentUtil {
 	}
 
 	/**
+	* Returns all the documents where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param modifiedDate the modified date
+	* @return the matching documents
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.sample.model.Document> findBysearch(
+		long userId, long companyId, long groupId, java.util.Date createDate,
+		java.util.Date modifiedDate)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findBysearch(userId, companyId, groupId, createDate,
+			modifiedDate);
+	}
+
+	/**
+	* Returns a range of all the documents where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.sample.model.impl.DocumentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param modifiedDate the modified date
+	* @param start the lower bound of the range of documents
+	* @param end the upper bound of the range of documents (not inclusive)
+	* @return the range of matching documents
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.sample.model.Document> findBysearch(
+		long userId, long companyId, long groupId, java.util.Date createDate,
+		java.util.Date modifiedDate, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findBysearch(userId, companyId, groupId, createDate,
+			modifiedDate, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the documents where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.sample.model.impl.DocumentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param modifiedDate the modified date
+	* @param start the lower bound of the range of documents
+	* @param end the upper bound of the range of documents (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching documents
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.sample.model.Document> findBysearch(
+		long userId, long companyId, long groupId, java.util.Date createDate,
+		java.util.Date modifiedDate, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findBysearch(userId, companyId, groupId, createDate,
+			modifiedDate, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns the first document in the ordered set where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param modifiedDate the modified date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching document
+	* @throws com.liferay.sample.NoSuchDocumentException if a matching document could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.sample.model.Document findBysearch_First(
+		long userId, long companyId, long groupId, java.util.Date createDate,
+		java.util.Date modifiedDate,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.sample.NoSuchDocumentException {
+		return getPersistence()
+				   .findBysearch_First(userId, companyId, groupId, createDate,
+			modifiedDate, orderByComparator);
+	}
+
+	/**
+	* Returns the first document in the ordered set where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param modifiedDate the modified date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching document, or <code>null</code> if a matching document could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.sample.model.Document fetchBysearch_First(
+		long userId, long companyId, long groupId, java.util.Date createDate,
+		java.util.Date modifiedDate,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .fetchBysearch_First(userId, companyId, groupId, createDate,
+			modifiedDate, orderByComparator);
+	}
+
+	/**
+	* Returns the last document in the ordered set where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param modifiedDate the modified date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching document
+	* @throws com.liferay.sample.NoSuchDocumentException if a matching document could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.sample.model.Document findBysearch_Last(
+		long userId, long companyId, long groupId, java.util.Date createDate,
+		java.util.Date modifiedDate,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.sample.NoSuchDocumentException {
+		return getPersistence()
+				   .findBysearch_Last(userId, companyId, groupId, createDate,
+			modifiedDate, orderByComparator);
+	}
+
+	/**
+	* Returns the last document in the ordered set where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param modifiedDate the modified date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching document, or <code>null</code> if a matching document could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.sample.model.Document fetchBysearch_Last(
+		long userId, long companyId, long groupId, java.util.Date createDate,
+		java.util.Date modifiedDate,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .fetchBysearch_Last(userId, companyId, groupId, createDate,
+			modifiedDate, orderByComparator);
+	}
+
+	/**
+	* Returns the documents before and after the current document in the ordered set where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	*
+	* @param documentId the primary key of the current document
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param modifiedDate the modified date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next document
+	* @throws com.liferay.sample.NoSuchDocumentException if a document with the primary key could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.sample.model.Document[] findBysearch_PrevAndNext(
+		long documentId, long userId, long companyId, long groupId,
+		java.util.Date createDate, java.util.Date modifiedDate,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.sample.NoSuchDocumentException {
+		return getPersistence()
+				   .findBysearch_PrevAndNext(documentId, userId, companyId,
+			groupId, createDate, modifiedDate, orderByComparator);
+	}
+
+	/**
+	* Removes all the documents where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63; from the database.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param modifiedDate the modified date
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void removeBysearch(long userId, long companyId,
+		long groupId, java.util.Date createDate, java.util.Date modifiedDate)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getPersistence()
+			.removeBysearch(userId, companyId, groupId, createDate, modifiedDate);
+	}
+
+	/**
+	* Returns the number of documents where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param modifiedDate the modified date
+	* @return the number of matching documents
+	* @throws SystemException if a system exception occurred
+	*/
+	public static int countBysearch(long userId, long companyId, long groupId,
+		java.util.Date createDate, java.util.Date modifiedDate)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .countBysearch(userId, companyId, groupId, createDate,
+			modifiedDate);
+	}
+
+	/**
 	* Caches the document in the entity cache if it is enabled.
 	*
 	* @param document the document

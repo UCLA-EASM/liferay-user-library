@@ -28,5 +28,12 @@
         <finder name="GroupId" return-type="Collection">
             <finder-column name="groupId"></finder-column>
         </finder>
+        <finder name="search" return-type="Collection">
+            <finder-column name="userId"></finder-column>
+            <finder-column name="companyId"></finder-column>
+            <finder-column name="groupId"></finder-column>
+            <finder-column name="createDate"></finder-column>
+            <finder-column name="modifiedDate"></finder-column>
+        </finder>
 	</entity>
 </service-builder>

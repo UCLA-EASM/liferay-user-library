@@ -91,9 +91,12 @@ public class DocumentModelImpl extends BaseModelImpl<Document>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.util.service.ServiceProps.get(
 				"value.object.column.bitmask.enabled.com.liferay.sample.model.Document"),
 			true);
-	public static long GROUPID_COLUMN_BITMASK = 1L;
-	public static long USERID_COLUMN_BITMASK = 2L;
-	public static long DOCUMENTID_COLUMN_BITMASK = 4L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long CREATEDATE_COLUMN_BITMASK = 2L;
+	public static long GROUPID_COLUMN_BITMASK = 4L;
+	public static long MODIFIEDDATE_COLUMN_BITMASK = 8L;
+	public static long USERID_COLUMN_BITMASK = 16L;
+	public static long DOCUMENTID_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -317,7 +320,19 @@ public class DocumentModelImpl extends BaseModelImpl<Document>
 
 	@Override
 	public void setCompanyId(long companyId) {
+		_columnBitmask |= COMPANYID_COLUMN_BITMASK;
+
+		if (!_setOriginalCompanyId) {
+			_setOriginalCompanyId = true;
+
+			_originalCompanyId = _companyId;
+		}
+
 		_companyId = companyId;
+	}
+
+	public long getOriginalCompanyId() {
+		return _originalCompanyId;
 	}
 
 	@JSON
@@ -361,7 +376,17 @@ public class DocumentModelImpl extends BaseModelImpl<Document>
 
 	@Override
 	public void setCreateDate(Date createDate) {
+		_columnBitmask |= CREATEDATE_COLUMN_BITMASK;
+
+		if (_originalCreateDate == null) {
+			_originalCreateDate = _createDate;
+		}
+
 		_createDate = createDate;
+	}
+
+	public Date getOriginalCreateDate() {
+		return _originalCreateDate;
 	}
 
 	@JSON
@@ -372,7 +397,17 @@ public class DocumentModelImpl extends BaseModelImpl<Document>
 
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
+		_columnBitmask |= MODIFIEDDATE_COLUMN_BITMASK;
+
+		if (_originalModifiedDate == null) {
+			_originalModifiedDate = _modifiedDate;
+		}
+
 		_modifiedDate = modifiedDate;
+	}
+
+	public Date getOriginalModifiedDate() {
+		return _originalModifiedDate;
 	}
 
 	public long getColumnBitmask() {
@@ -470,9 +505,17 @@ public class DocumentModelImpl extends BaseModelImpl<Document>
 
 		documentModelImpl._setOriginalGroupId = false;
 
+		documentModelImpl._originalCompanyId = documentModelImpl._companyId;
+
+		documentModelImpl._setOriginalCompanyId = false;
+
 		documentModelImpl._originalUserId = documentModelImpl._userId;
 
 		documentModelImpl._setOriginalUserId = false;
+
+		documentModelImpl._originalCreateDate = documentModelImpl._createDate;
+
+		documentModelImpl._originalModifiedDate = documentModelImpl._modifiedDate;
 
 		documentModelImpl._columnBitmask = 0;
 	}
@@ -608,12 +651,16 @@ public class DocumentModelImpl extends BaseModelImpl<Document>
 	private long _originalGroupId;
 	private boolean _setOriginalGroupId;
 	private long _companyId;
+	private long _originalCompanyId;
+	private boolean _setOriginalCompanyId;
 	private long _userId;
 	private String _userUuid;
 	private long _originalUserId;
 	private boolean _setOriginalUserId;
 	private Date _createDate;
+	private Date _originalCreateDate;
 	private Date _modifiedDate;
+	private Date _originalModifiedDate;
 	private long _columnBitmask;
 	private Document _escapedModel;
 }

@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.CalendarUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.InstanceFactory;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -34,6 +35,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnmodifiableList;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
@@ -47,6 +49,7 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -1054,6 +1057,721 @@ public class DocumentPersistenceImpl extends BasePersistenceImpl<Document>
 	}
 
 	private static final String _FINDER_COLUMN_GROUPID_GROUPID_2 = "document.groupId = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_SEARCH = new FinderPath(DocumentModelImpl.ENTITY_CACHE_ENABLED,
+			DocumentModelImpl.FINDER_CACHE_ENABLED, DocumentImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findBysearch",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Date.class.getName(), Date.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SEARCH =
+		new FinderPath(DocumentModelImpl.ENTITY_CACHE_ENABLED,
+			DocumentModelImpl.FINDER_CACHE_ENABLED, DocumentImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findBysearch",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Date.class.getName(), Date.class.getName()
+			},
+			DocumentModelImpl.USERID_COLUMN_BITMASK |
+			DocumentModelImpl.COMPANYID_COLUMN_BITMASK |
+			DocumentModelImpl.GROUPID_COLUMN_BITMASK |
+			DocumentModelImpl.CREATEDATE_COLUMN_BITMASK |
+			DocumentModelImpl.MODIFIEDDATE_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_SEARCH = new FinderPath(DocumentModelImpl.ENTITY_CACHE_ENABLED,
+			DocumentModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countBysearch",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Date.class.getName(), Date.class.getName()
+			});
+
+	/**
+	 * Returns all the documents where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param modifiedDate the modified date
+	 * @return the matching documents
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public List<Document> findBysearch(long userId, long companyId,
+		long groupId, Date createDate, Date modifiedDate)
+		throws SystemException {
+		return findBysearch(userId, companyId, groupId, createDate,
+			modifiedDate, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the documents where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.sample.model.impl.DocumentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param modifiedDate the modified date
+	 * @param start the lower bound of the range of documents
+	 * @param end the upper bound of the range of documents (not inclusive)
+	 * @return the range of matching documents
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public List<Document> findBysearch(long userId, long companyId,
+		long groupId, Date createDate, Date modifiedDate, int start, int end)
+		throws SystemException {
+		return findBysearch(userId, companyId, groupId, createDate,
+			modifiedDate, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the documents where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.sample.model.impl.DocumentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param modifiedDate the modified date
+	 * @param start the lower bound of the range of documents
+	 * @param end the upper bound of the range of documents (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching documents
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public List<Document> findBysearch(long userId, long companyId,
+		long groupId, Date createDate, Date modifiedDate, int start, int end,
+		OrderByComparator orderByComparator) throws SystemException {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SEARCH;
+			finderArgs = new Object[] {
+					userId, companyId, groupId, createDate, modifiedDate
+				};
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_SEARCH;
+			finderArgs = new Object[] {
+					userId, companyId, groupId, createDate, modifiedDate,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<Document> list = (List<Document>)FinderCacheUtil.getResult(finderPath,
+				finderArgs, this);
+
+		if ((list != null) && !list.isEmpty()) {
+			for (Document document : list) {
+				if ((userId != document.getUserId()) ||
+						(companyId != document.getCompanyId()) ||
+						(groupId != document.getGroupId()) ||
+						!Validator.equals(createDate, document.getCreateDate()) ||
+						!Validator.equals(modifiedDate,
+							document.getModifiedDate())) {
+					list = null;
+
+					break;
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(7 +
+						(orderByComparator.getOrderByFields().length * 3));
+			}
+			else {
+				query = new StringBundler(7);
+			}
+
+			query.append(_SQL_SELECT_DOCUMENT_WHERE);
+
+			query.append(_FINDER_COLUMN_SEARCH_USERID_2);
+
+			query.append(_FINDER_COLUMN_SEARCH_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_SEARCH_GROUPID_2);
+
+			boolean bindCreateDate = false;
+
+			if (createDate == null) {
+				query.append(_FINDER_COLUMN_SEARCH_CREATEDATE_1);
+			}
+			else {
+				bindCreateDate = true;
+
+				query.append(_FINDER_COLUMN_SEARCH_CREATEDATE_2);
+			}
+
+			boolean bindModifiedDate = false;
+
+			if (modifiedDate == null) {
+				query.append(_FINDER_COLUMN_SEARCH_MODIFIEDDATE_1);
+			}
+			else {
+				bindModifiedDate = true;
+
+				query.append(_FINDER_COLUMN_SEARCH_MODIFIEDDATE_2);
+			}
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(DocumentModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(userId);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				if (bindCreateDate) {
+					qPos.add(CalendarUtil.getTimestamp(createDate));
+				}
+
+				if (bindModifiedDate) {
+					qPos.add(CalendarUtil.getTimestamp(modifiedDate));
+				}
+
+				if (!pagination) {
+					list = (List<Document>)QueryUtil.list(q, getDialect(),
+							start, end, false);
+
+					Collections.sort(list);
+
+					list = new UnmodifiableList<Document>(list);
+				}
+				else {
+					list = (List<Document>)QueryUtil.list(q, getDialect(),
+							start, end);
+				}
+
+				cacheResult(list);
+
+				FinderCacheUtil.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				FinderCacheUtil.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first document in the ordered set where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param modifiedDate the modified date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching document
+	 * @throws com.liferay.sample.NoSuchDocumentException if a matching document could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public Document findBysearch_First(long userId, long companyId,
+		long groupId, Date createDate, Date modifiedDate,
+		OrderByComparator orderByComparator)
+		throws NoSuchDocumentException, SystemException {
+		Document document = fetchBysearch_First(userId, companyId, groupId,
+				createDate, modifiedDate, orderByComparator);
+
+		if (document != null) {
+			return document;
+		}
+
+		StringBundler msg = new StringBundler(12);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("userId=");
+		msg.append(userId);
+
+		msg.append(", companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(", createDate=");
+		msg.append(createDate);
+
+		msg.append(", modifiedDate=");
+		msg.append(modifiedDate);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchDocumentException(msg.toString());
+	}
+
+	/**
+	 * Returns the first document in the ordered set where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param modifiedDate the modified date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching document, or <code>null</code> if a matching document could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public Document fetchBysearch_First(long userId, long companyId,
+		long groupId, Date createDate, Date modifiedDate,
+		OrderByComparator orderByComparator) throws SystemException {
+		List<Document> list = findBysearch(userId, companyId, groupId,
+				createDate, modifiedDate, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last document in the ordered set where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param modifiedDate the modified date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching document
+	 * @throws com.liferay.sample.NoSuchDocumentException if a matching document could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public Document findBysearch_Last(long userId, long companyId,
+		long groupId, Date createDate, Date modifiedDate,
+		OrderByComparator orderByComparator)
+		throws NoSuchDocumentException, SystemException {
+		Document document = fetchBysearch_Last(userId, companyId, groupId,
+				createDate, modifiedDate, orderByComparator);
+
+		if (document != null) {
+			return document;
+		}
+
+		StringBundler msg = new StringBundler(12);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("userId=");
+		msg.append(userId);
+
+		msg.append(", companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(", createDate=");
+		msg.append(createDate);
+
+		msg.append(", modifiedDate=");
+		msg.append(modifiedDate);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchDocumentException(msg.toString());
+	}
+
+	/**
+	 * Returns the last document in the ordered set where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param modifiedDate the modified date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching document, or <code>null</code> if a matching document could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public Document fetchBysearch_Last(long userId, long companyId,
+		long groupId, Date createDate, Date modifiedDate,
+		OrderByComparator orderByComparator) throws SystemException {
+		int count = countBysearch(userId, companyId, groupId, createDate,
+				modifiedDate);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Document> list = findBysearch(userId, companyId, groupId,
+				createDate, modifiedDate, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the documents before and after the current document in the ordered set where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	 *
+	 * @param documentId the primary key of the current document
+	 * @param userId the user ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param modifiedDate the modified date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next document
+	 * @throws com.liferay.sample.NoSuchDocumentException if a document with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public Document[] findBysearch_PrevAndNext(long documentId, long userId,
+		long companyId, long groupId, Date createDate, Date modifiedDate,
+		OrderByComparator orderByComparator)
+		throws NoSuchDocumentException, SystemException {
+		Document document = findByPrimaryKey(documentId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Document[] array = new DocumentImpl[3];
+
+			array[0] = getBysearch_PrevAndNext(session, document, userId,
+					companyId, groupId, createDate, modifiedDate,
+					orderByComparator, true);
+
+			array[1] = document;
+
+			array[2] = getBysearch_PrevAndNext(session, document, userId,
+					companyId, groupId, createDate, modifiedDate,
+					orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Document getBysearch_PrevAndNext(Session session,
+		Document document, long userId, long companyId, long groupId,
+		Date createDate, Date modifiedDate,
+		OrderByComparator orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByFields().length * 6));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_DOCUMENT_WHERE);
+
+		query.append(_FINDER_COLUMN_SEARCH_USERID_2);
+
+		query.append(_FINDER_COLUMN_SEARCH_COMPANYID_2);
+
+		query.append(_FINDER_COLUMN_SEARCH_GROUPID_2);
+
+		boolean bindCreateDate = false;
+
+		if (createDate == null) {
+			query.append(_FINDER_COLUMN_SEARCH_CREATEDATE_1);
+		}
+		else {
+			bindCreateDate = true;
+
+			query.append(_FINDER_COLUMN_SEARCH_CREATEDATE_2);
+		}
+
+		boolean bindModifiedDate = false;
+
+		if (modifiedDate == null) {
+			query.append(_FINDER_COLUMN_SEARCH_MODIFIEDDATE_1);
+		}
+		else {
+			bindModifiedDate = true;
+
+			query.append(_FINDER_COLUMN_SEARCH_MODIFIEDDATE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(DocumentModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(userId);
+
+		qPos.add(companyId);
+
+		qPos.add(groupId);
+
+		if (bindCreateDate) {
+			qPos.add(CalendarUtil.getTimestamp(createDate));
+		}
+
+		if (bindModifiedDate) {
+			qPos.add(CalendarUtil.getTimestamp(modifiedDate));
+		}
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(document);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Document> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the documents where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63; from the database.
+	 *
+	 * @param userId the user ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param modifiedDate the modified date
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public void removeBysearch(long userId, long companyId, long groupId,
+		Date createDate, Date modifiedDate) throws SystemException {
+		for (Document document : findBysearch(userId, companyId, groupId,
+				createDate, modifiedDate, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+				null)) {
+			remove(document);
+		}
+	}
+
+	/**
+	 * Returns the number of documents where userId = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; and modifiedDate = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param modifiedDate the modified date
+	 * @return the number of matching documents
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public int countBysearch(long userId, long companyId, long groupId,
+		Date createDate, Date modifiedDate) throws SystemException {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_SEARCH;
+
+		Object[] finderArgs = new Object[] {
+				userId, companyId, groupId, createDate, modifiedDate
+			};
+
+		Long count = (Long)FinderCacheUtil.getResult(finderPath, finderArgs,
+				this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(6);
+
+			query.append(_SQL_COUNT_DOCUMENT_WHERE);
+
+			query.append(_FINDER_COLUMN_SEARCH_USERID_2);
+
+			query.append(_FINDER_COLUMN_SEARCH_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_SEARCH_GROUPID_2);
+
+			boolean bindCreateDate = false;
+
+			if (createDate == null) {
+				query.append(_FINDER_COLUMN_SEARCH_CREATEDATE_1);
+			}
+			else {
+				bindCreateDate = true;
+
+				query.append(_FINDER_COLUMN_SEARCH_CREATEDATE_2);
+			}
+
+			boolean bindModifiedDate = false;
+
+			if (modifiedDate == null) {
+				query.append(_FINDER_COLUMN_SEARCH_MODIFIEDDATE_1);
+			}
+			else {
+				bindModifiedDate = true;
+
+				query.append(_FINDER_COLUMN_SEARCH_MODIFIEDDATE_2);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(userId);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				if (bindCreateDate) {
+					qPos.add(CalendarUtil.getTimestamp(createDate));
+				}
+
+				if (bindModifiedDate) {
+					qPos.add(CalendarUtil.getTimestamp(modifiedDate));
+				}
+
+				count = (Long)q.uniqueResult();
+
+				FinderCacheUtil.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				FinderCacheUtil.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_SEARCH_USERID_2 = "document.userId = ? AND ";
+	private static final String _FINDER_COLUMN_SEARCH_COMPANYID_2 = "document.companyId = ? AND ";
+	private static final String _FINDER_COLUMN_SEARCH_GROUPID_2 = "document.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_SEARCH_CREATEDATE_1 = "document.createDate IS NULL AND ";
+	private static final String _FINDER_COLUMN_SEARCH_CREATEDATE_2 = "document.createDate = ? AND ";
+	private static final String _FINDER_COLUMN_SEARCH_MODIFIEDDATE_1 = "document.modifiedDate IS NULL";
+	private static final String _FINDER_COLUMN_SEARCH_MODIFIEDDATE_2 = "document.modifiedDate = ?";
 
 	public DocumentPersistenceImpl() {
 		setModelClass(Document.class);
@@ -1309,6 +2027,33 @@ public class DocumentPersistenceImpl extends BasePersistenceImpl<Document>
 
 				FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_GROUPID, args);
 				FinderCacheUtil.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPID,
+					args);
+			}
+
+			if ((documentModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SEARCH.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						documentModelImpl.getOriginalUserId(),
+						documentModelImpl.getOriginalCompanyId(),
+						documentModelImpl.getOriginalGroupId(),
+						documentModelImpl.getOriginalCreateDate(),
+						documentModelImpl.getOriginalModifiedDate()
+					};
+
+				FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_SEARCH, args);
+				FinderCacheUtil.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SEARCH,
+					args);
+
+				args = new Object[] {
+						documentModelImpl.getUserId(),
+						documentModelImpl.getCompanyId(),
+						documentModelImpl.getGroupId(),
+						documentModelImpl.getCreateDate(),
+						documentModelImpl.getModifiedDate()
+					};
+
+				FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_SEARCH, args);
+				FinderCacheUtil.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SEARCH,
 					args);
 			}
 		}
